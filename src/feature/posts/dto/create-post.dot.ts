@@ -1,6 +1,9 @@
 /**
+ * DTO层 (Data Transfer Object) 
+ * 我们使用pipe的时候我们必须使用class，因为interface会在运行时中被置换，而导致我们无法引用它
  * @file 验证接口入参
  * @desc <DTO>本身是不存在任何验证功能， 但是我们可以借助<class-validator>来让DTO可以验证数据
+ * 
  */
 
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';

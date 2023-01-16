@@ -3,10 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { PostsModule } from './posts/posts.module'
+import { PostsModule } from './feature/posts/posts.module';
 import envConfig from '../config/env';
+import { PostsEntity } from './feature/posts/posts.entity';
 
-import { PostsEntity } from './posts/posts.entity'
 @Module({
     imports: [
         ConfigModule.forRoot({
