@@ -53,6 +53,72 @@
 - `imports`：导入模块的列表，如果需要使用其他模块的服务，需要通过这里导入；
 - `exports`：导出服务的列表，供其他模块导入使用。如果希望当前模块下的服务可以被其他模块共享，需要在这里配置导出；
 
+# NestJS 实体
+```
+<!-- 自动递增的主键 -->
+@PrimaryGeneratedColumn()
+id:number
+
+<!-- 自动递增uuid -->
+@PrimaryGeneratedColumn("uuid")
+id:number
+
+<!-- 自动生成列 -->
+@Generated('uuid')
+uuid:string
+
+<!-- 枚举列 -->
+@Column({
+    type:"enum",
+    enum:['1','2','3','4'],
+    default:'1'
+})
+xx:string
+```
+
+# @Column 可选配置
+```
+@Column({
+    unique: boolean - 将列标记为唯一列（创建唯一约束）
+    type: "varchar", // 数据库的列类型
+    name: "ipaaa", // 数据库表中的列名
+    length: number - 列类型的长度。 例如，如果要创建varchar（150）类型，请指定列类型和长度选项
+    nullable: true, // 在数据库中使列NULL或NOT NULL。 默认情况下，列是nullable：false
+    comment: "注释", // 数据库列备注，并非所有数据库类型都支持
+    select: true,  // 定义在进行查询时是否默认隐藏此列。 设置为false时，列数据不会显示标准查询。 默认情况下，列是select：true
+    default: "xxxx", // 加数据库级列的DEFAULT值
+    primary: false, // 将列标记为主要列 使用方式和@PrimaryColumn相同。
+    update: true, // 指示"save"操作是否更新列值。如果为false，则只能在第一次插入对象时编写该值。 默认值为"true"
+    collation: "", //定义列排序规则
+    enum: string[]|AnyEnum - 在enum列类型中使用，以指定允许的枚举值列表。 你也可以指定数组或指定枚举类
+})
+```
+# 特殊的列类型
+- simple-array
+    > 有一种称为simple-array的特殊列类型，它可以将原始数组值存储在单个字符串列中。 所有值都以逗号分隔
+    ```
+    @Entity()
+    export class User {
+        @PrimaryGeneratedColumn()
+        id: number;
+    
+        @Column("simple-array")
+        names: string[];
+    }
+    ```
+- simple-json
+    > 还有一个名为simple-json的特殊列类型，它可以存储任何可以通过 JSON.stringify 存储在数据库中的值。 当你的数据库中没有 json 类型而你又想存储和加载对象，该类型就很有用了
+    ```
+    @Entity()
+    export class User {
+        @PrimaryGeneratedColumn()
+        id: number;
+    
+        @Column("simple-json")
+        profile: { name: string; nickname: string };
+    }
+    ```
+
 # 路由的控制 (RESTful API)
 - HTTP `GET` 请求：用于查询资源。例如：'/users' 用于查询所有用户。
 - HTTP `POST` 请求：用于创建新资源。例如：'/users' 用于创建新用户。
