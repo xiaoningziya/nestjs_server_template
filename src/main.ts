@@ -10,7 +10,7 @@ import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { HttpExceptionFilter } from './core/filter/transform.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { PORT, IP } from './constant/listen'
-import { SwaggerConfig } from './config/swagger'
+import { SwaggerConfig } from './extract/swagger'
 
 async function runServer() {
     // NestFactory 暴露了一些静态方法用于创建应用程序的实例。
