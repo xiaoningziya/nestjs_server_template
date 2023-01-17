@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { CreatePostDto } from './dto/create-post.dot'
 
-@ApiTags('文章相关接口')
+@ApiTags('文章相关接口：/api/post')
 @Controller('post')
 export class PostsController {
     constructor(private readonly postsService: PostsService) { }

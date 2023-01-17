@@ -4,11 +4,12 @@
  */
 
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+// import { PostInfoDto } from './dto/create-post.dot';
 
 @Entity("posts")
 export class PostsEntity {
-    @PrimaryGeneratedColumn()
-    id: number; // 标记为主列，值自动生成
+    @PrimaryGeneratedColumn() // 标记为主列，值自动生成
+    id: number;
 
     @Column({ length: 50 })
     title: string;
@@ -16,8 +17,15 @@ export class PostsEntity {
     @Column({ length: 20 })
     author: string;
 
+    // 作者
+    // @ManyToOne((type) => User, (user) => user.nickname)
+    // author: User;
+
     @Column("text")
     content: string;
+
+    @Column("text")
+    coverUrl: string;
 
     @Column({ default: '' })
     thumb_url: string;
@@ -30,4 +38,15 @@ export class PostsEntity {
 
     @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
     update_time: Date
+
+    // toResponseObject(): PostInfoDto {
+    //     let responseObj: PostInfoDto = {
+    //       ...this,
+    //       isRecommend: this.isRecommend ? true : false,
+    //     };
+    //     if (this.category) {
+    //       responseObj.category = this.category.name;
+    //     }
+    //     return responseObj;
+    // }
 }
