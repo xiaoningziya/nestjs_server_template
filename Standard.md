@@ -5,21 +5,31 @@
 
 # 项目组成
 
--   数据库： `mysql-8.0.31macos12`
--   可视化： `MySQL Workbench community-8.0.27`
 -   文档使用 Swagger `http://localhost:3001/docs`
 -   测试接口使用`ApiPost`
 -   映射数据库表使用：`TypeORM`
 -   验证入参配置 DTO 规则 `class-validator`
 -   包装出参全局配置 `过滤器 & 拦截器`
 -   前后端认证方案使用`JWT`
+-   可视化： `MySQL Workbench community-8.0.27`
+-   数据库： `mysql-8.0.31macos12`
+    -   域名：`localhost`
+    -   端口：`3306`
+    -   用户：`root`
+    -   密码：`rootpass`
+    -   库名：`NestData`
 -   缓存方案使用`redis`
+    -   启动命令：`/opt/homebrew/opt/redis/bin/redis-server /opt/homebrew/etc/redis.conf`
+    -   域名：`127.0.0.1`
+    -   端口：`6379`
+    -   密码：`182`
 
 # VSCode 工具
 
 -   `Nest-Server-Tools`
 -   `NestJS Files`
 -   `NestJS Files`
+-   `Database Client`
 
 # 核心文件
 
@@ -111,7 +121,9 @@ xx:string
 # 特殊的列类型
 
 -   simple-array
+
     > 有一种称为 simple-array 的特殊列类型，它可以将原始数组值存储在单个字符串列中。 所有值都以逗号分隔
+
     ```
     @Entity()
     export class User {
@@ -122,8 +134,11 @@ xx:string
         names: string[];
     }
     ```
+
 -   simple-json
+
     > 还有一个名为 simple-json 的特殊列类型，它可以存储任何可以通过 JSON.stringify 存储在数据库中的值。 当你的数据库中没有 json 类型而你又想存储和加载对象，该类型就很有用了
+
     ```
     @Entity()
     export class User {

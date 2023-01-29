@@ -15,6 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
+import { RedisCacheService } from '@/db/redis-cache.service';
 
 export class JwtStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -22,6 +23,7 @@ export class JwtStorage extends PassportStrategy(Strategy) {
         private readonly userRepository: Repository<UserEntity>,
         private readonly configService: ConfigService,
         private readonly authService: AuthService,
+        private readonly redisCacheService: RedisCacheService,
     ) {
         super({
             /**
@@ -37,16 +39,47 @@ export class JwtStorage extends PassportStrategy(Strategy) {
 
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: configService.get('SECRET'),
+            passReqToCallback: true,
         } as StrategyOptions);
     }
 
-    async validate(user: UserEntity) {
-        console.log('jwt', user);
+    async validate(req, user: UserEntity) {
+        /**
+         * @desc 取出token并验证
+         * 在验证token时， 从redis中取token，如果取不到token，可能是token已过期。
+         */
+        const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        const cacheToken = await this.redisCacheService.cacheGet(
+            `${user.id}&${user.account}`,
+        );
+        if (!cacheToken) {
+            throw new UnauthorizedException('token 已过期');
+        }
+
+        /**
+         * @desc 用户唯一登录
+         * 当用户登录时，每次签发的新的token,会覆盖之前的token,
+         * 判断redis中的token与请求传入的token是否相同， 不相同时， 可能是其他地方已登录， 提示token错误
+         */
+        if (token != cacheToken) {
+            throw new UnauthorizedException('token不正确');
+        }
+
         const existUser = await this.authService.getUser(user);
-        console.log('existUser', existUser);
         if (!existUser) {
             throw new UnauthorizedException('token不正确');
         }
+
+        /**
+         * 在token认证通过后，重新设置过期时间
+         * 因为使用的cache-manager没有通过直接更新有效期方法，通过重新设置来实现
+         */
+        this.redisCacheService.cacheSet(
+            `${user.id}&${user.account}`,
+            token,
+            1800,
+        );
+
         return existUser;
     }
 }

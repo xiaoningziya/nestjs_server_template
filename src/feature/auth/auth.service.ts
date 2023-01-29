@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { RedisCacheService } from '@/db/redis-cache.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
         private userService: UserService,
+        private redisCacheService: RedisCacheService,
     ) {}
 
     // 生成token
@@ -23,6 +25,16 @@ export class AuthService {
             id: user.id,
             account: user.account,
         });
+
+        /**
+         * @desc token 过期处理
+         * 在登录时，将jwt生成的token，存入redis,并设置有效期为30分钟。存入redis的key由用户信息组成， value是token值
+         */
+        await this.redisCacheService.cacheSet(
+            `${user.id}&${user.account}`,
+            token,
+            1800,
+        );
         return { token };
     }
 

@@ -9,6 +9,7 @@ import { AuthModule } from './feature/auth/auth.module';
 import envConfig from '../config/env';
 import { PostsEntity } from './feature/posts/posts.entity';
 import { UserEntity } from './feature/user/user.entity';
+import { RedisCacheModule } from '@/db/redis-cache.module';
 
 // 业务相关的Modules,组合后在入口解构
 const FeatureModuleList: Array<typeof PostsModule> = [
@@ -16,6 +17,7 @@ const FeatureModuleList: Array<typeof PostsModule> = [
     PostsModule,
     UserModule,
     AuthModule,
+    RedisCacheModule,
 ];
 @Module({
     imports: [

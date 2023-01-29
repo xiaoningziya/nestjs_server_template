@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtStorage } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
+import { RedisCacheModule } from '@/db/redis-cache.module';
 
 /**
  * 这里不建议将秘钥写死在代码也， 它应该和数据库配置的数据一样，从环境变量中来
@@ -18,7 +19,8 @@ const jwtModule = JwtModule.registerAsync({
     useFactory: async (configService: ConfigService) => {
         return {
             secret: configService.get('SECRET', 'key'),
-            signOptions: { expiresIn: '4h' },
+            // 先不设置有效期 配合其他代码和<redis>完成<token自动续期>
+            // signOptions: { expiresIn: '4h' },
         };
     },
 });
@@ -29,6 +31,7 @@ const jwtModule = JwtModule.registerAsync({
         PassportModule,
         jwtModule,
         UserModule,
+        RedisCacheModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, LocalStorage, JwtStorage],
