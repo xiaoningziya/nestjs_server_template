@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { PostsModule } from './feature/posts/posts.module';
 import { UserModule } from './feature/user/user.module';
+import { AuthModule } from './feature/auth/auth.module';
 import envConfig from '../config/env';
 import { PostsEntity } from './feature/posts/posts.entity';
 import { UserEntity } from './feature/user/user.entity'
@@ -12,7 +13,8 @@ import { UserEntity } from './feature/user/user.entity'
 // 业务相关的Modules,组合后在入口解构
 const FeatureModuleList: Array<typeof PostsModule> = [ // tip: 此处的泛型参数不知道类型，可以直接引用子集的类型
     PostsModule,
-    UserModule
+    UserModule,
+    AuthModule
 ]
 @Module({
     imports: [

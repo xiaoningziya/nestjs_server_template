@@ -10,7 +10,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
       let validMessage: string = '';
   
       for (let key in exception) {
-        console.log(key, exception[key]);
+        console.log('过滤器', key, exception[key]);
       }
       if (typeof exceptionResponse === 'object') {
         validMessage =

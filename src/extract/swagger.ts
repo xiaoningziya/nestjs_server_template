@@ -15,6 +15,7 @@ export class SwaggerConfig {
         const config = new DocumentBuilder()
             .setTitle(CONST.TITLE)
             .setDescription(CONST.DESC)
+            .addBearerAuth() // 为了可以顺畅的使用Swagger来测试传递bearer token接口
             .setVersion(CONST.VER)
             .addBearerAuth()
             .build();
