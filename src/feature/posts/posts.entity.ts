@@ -3,10 +3,10 @@
  * @desc 遵从设计单一原则，此文件只对接数据库，不负责接口入参校验，为保证后期灵活性
  */
 
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 // import { PostInfoDto } from './dto/create-post.dot';
 
-@Entity("posts")
+@Entity('posts')
 export class PostsEntity {
     @PrimaryGeneratedColumn() // 标记为主列，值自动生成
     id: number;
@@ -21,23 +21,23 @@ export class PostsEntity {
     // @ManyToOne((type) => User, (user) => user.nickname)
     // author: User;
 
-    @Column("text")
+    @Column('text')
     content: string;
 
-    @Column("text")
+    @Column('text')
     coverUrl: string;
 
     @Column({ default: '' })
     thumb_url: string;
 
     @Column({ default: 1 })
-    type: number
+    type: number;
 
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-    create_time: Date
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    create_time: Date;
 
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
-    update_time: Date
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    update_time: Date;
 
     // toResponseObject(): PostInfoDto {
     //     let responseObj: PostInfoDto = {

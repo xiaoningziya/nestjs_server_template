@@ -13,7 +13,7 @@ export class PostsService {
     constructor(
         @InjectRepository(PostsEntity)
         private readonly postsRepository: Repository<PostsEntity>,
-    ) { }
+    ) {}
 
     // 创建文章
     async create(post: Partial<PostsEntity>): Promise<PostsEntity> {
@@ -44,7 +44,7 @@ export class PostsService {
     async findById(id): Promise<PostsEntity> {
         return await this.postsRepository.findOne({
             where: {
-                id
+                id,
             },
         });
     }
@@ -53,7 +53,7 @@ export class PostsService {
     async updateById(id, post): Promise<PostsEntity> {
         const existPost = await this.postsRepository.findOne({
             where: {
-                id
+                id,
             },
         });
         if (!existPost) {
@@ -67,7 +67,7 @@ export class PostsService {
     async remove(id) {
         const existPost = await this.postsRepository.findOne({
             where: {
-                id
+                id,
             },
         });
         if (!existPost) {

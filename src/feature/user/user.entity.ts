@@ -1,8 +1,8 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-var bcrypt = require('bcryptjs')
+var bcrypt = require('bcryptjs');
 
-@Entity("user") // 库表名称
+@Entity('user') // 库表名称
 export class UserEntity {
     // 使用@PrimaryGeneratedColumn('uuid')创建一个主列id，该值将使用uuid自动生成。 Uuid 是一个独特的字符串
     @PrimaryGeneratedColumn('uuid')
@@ -15,7 +15,7 @@ export class UserEntity {
     @Column({
         length: 100,
         // select: false // 表示隐藏此列 和@Exclude二选一
-    }) 
+    })
     password: string;
 
     @Column({ length: 20, default: '' })
@@ -24,10 +24,10 @@ export class UserEntity {
     @Column({ default: '' })
     avatar: string;
 
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     create_time: Date;
 
-    @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     update_time: Date;
 
     /**
@@ -36,8 +36,7 @@ export class UserEntity {
      */
     @BeforeInsert()
     async encryptPwd() {
-        var salt = await bcrypt.genSaltSync(10)
-        this.password = await bcrypt.hashSync(this.password, salt)
+        var salt = await bcrypt.genSaltSync(10);
+        this.password = await bcrypt.hashSync(this.password, salt);
     }
-    
 }

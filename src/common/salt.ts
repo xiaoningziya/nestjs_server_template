@@ -14,11 +14,10 @@
 
 // const hashPassword = bcryptjs.hashSync(password, 10)
 
-
- /**
-  * 校验 - 使用同步方法
-  * bcryptjs.compareSync(data, encrypted)
-  *    - data        要比较的数据, 使用登录时传递过来的密码
-  *    - encrypted   要比较的数据, 使用从数据库中查询出来的加密过的密码
-  */
+/**
+ * 校验 - 使用同步方法
+ * bcryptjs.compareSync(data, encrypted)
+ *    - data        要比较的数据, 使用登录时传递过来的密码
+ *    - encrypted   要比较的数据, 使用从数据库中查询出来的加密过的密码
+ */
 //  const isOk = bcryptjs.compareSync(password, encryptPassword)

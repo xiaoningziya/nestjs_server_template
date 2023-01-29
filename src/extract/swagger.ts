@@ -4,12 +4,12 @@
  */
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as CONST from '../constant/swagger'
+import * as CONST from '../constant/swagger';
 
 export class SwaggerConfig {
     app: NestExpressApplication;
     constructor(app: NestExpressApplication) {
-        this.app = app
+        this.app = app;
     }
     public Init(): void {
         const config = new DocumentBuilder()

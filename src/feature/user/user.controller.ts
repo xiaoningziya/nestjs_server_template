@@ -1,13 +1,23 @@
 import { UserService, UserRo } from './user.service';
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
-import * as UserDOT from './user.dot'
+import {
+    Body,
+    ClassSerializerInterceptor,
+    Controller,
+    Get,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import * as UserDOT from './user.dot';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('用户系列接口：/api/user')
 @Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(private readonly userService: UserService) {}
 
     @ApiOperation({ summary: '获取用户信息' })
     @ApiBearerAuth()
@@ -25,7 +35,7 @@ export class UserController {
     @ApiOperation({ summary: '用户注册' })
     @Post('register')
     async register(@Body() post: UserDOT.RegisterUserDto) {
-        return await this.userService.Register(post)
+        return await this.userService.Register(post);
     }
 
     /**
@@ -35,9 +45,12 @@ export class UserController {
     @ApiOperation({ summary: '修改密码' })
     @UseGuards(AuthGuard('jwt'))
     @Post('updatePassword')
-    async updatePassword(@Body() post: UserDOT.UpdatePasswordUserDto, @Req() req) {
-        const userInfo = req.user // 拿到请求的用户信息
-        return await this.userService.UpdatePassword(post, userInfo)
+    async updatePassword(
+        @Body() post: UserDOT.UpdatePasswordUserDto,
+        @Req() req,
+    ) {
+        const userInfo = req.user; // 拿到请求的用户信息
+        return await this.userService.UpdatePassword(post, userInfo);
     }
 
     /**
@@ -48,6 +61,6 @@ export class UserController {
     @UseGuards(AuthGuard('jwt'))
     @Post('loginOut')
     async loginOut(@Body() post: UserDOT.LoginOutUserDto) {
-        return await this.userService.LoginOut(post)
+        return await this.userService.LoginOut(post);
     }
 }
