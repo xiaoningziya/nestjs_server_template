@@ -1,19 +1,30 @@
-# 开发环境
+## 开发环境
 
 -   NodeJS `16.18.1`
 -   npm `8.19.2`
 
-# Description
+## 查阅文档
 
-[Nest 开源项目](https://github.com/nestjs/nest)
+[NestJS 开源项目](https://github.com/nestjs/nest)
+https://nestjs.com/
 
-# Installation
+[NestJS 英文文档](https://docs.nestjs.com/)
+
+[NestJS 中文文档](https://www.nestjs.com.cn/)
+
+[NestJS 9.x 版本 中文文档](https://docs.nestjs.cn/9/introduction)
+
+[TypeORM 中文文档](https://typeorm.bootcss.com/caching)
+
+[TypeORM 英文文档](https://typeorm.io/)
+
+## 下载依赖
 
 ```bash
 $ npm install
 ```
 
-# Running the app
+## 运行服务 (运行服务前应当开启两个其它服务：`mysql` & `redis`)
 
 ```bash
 # development
@@ -26,14 +37,14 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-# VSCode 工具
+## VSCode 工具
 
 -   `Nest-Server-Tools`
 -   `NestJS Files`
 -   `NestJS Files`
 -   `Database Client`
 
-# 核心文件
+## 核心文件
 
 -   `app.controller.ts` 带有单个路由的基本控制器。
 -   `app.controller.spec.ts` 针对控制器的单元测试。
@@ -41,23 +52,27 @@ $ npm run start:prod
 -   `app.service.ts` 具有单一方法的基本服务（service）。 method.
 -   `main.ts` 应用程序的入口文件，它使用核心函数 **NestFactory** 来创建 Nest 应用程序的实例。
 
-# 项目组成
+## 项目组成
 
 -   文档使用 Swagger `http://localhost:3001/docs`
--   测试接口使用`ApiPost`
+-   测试接口使用 `ApiPost`
 -   映射数据库表使用：`TypeORM`
 -   验证入参配置 DTO 规则 `class-validator`
 -   包装出参全局配置 `过滤器 & 拦截器`
--   前后端认证方案使用`JWT`
+-   前后端认证方案使用 `JWT`
 -   可视化： `MySQL Workbench community-8.0.27`
 -   数据库： `mysql-8.0.31macos12`
+    -   启动方式：`在偏好设置的mysql入口start server即可`
     -   域名：`localhost`
     -   端口：`3306`
     -   用户：`root`
     -   密码：`rootpass`
     -   库名：`NestData`
 -   缓存方案使用`redis`
-    -   启动命令：`/opt/homebrew/opt/redis/bin/redis-server /opt/homebrew/etc/redis.conf`
+    -   启动命令：
+        ```bash
+        $ /opt/homebrew/opt/redis/bin/redis-server /opt/homebrew/etc/redis.conf
+        ```
     -   域名：`127.0.0.1`
     -   端口：`6379`
     -   密码：`182`
