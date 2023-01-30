@@ -6,7 +6,6 @@
 ## 查阅文档
 
 [NestJS 开源项目](https://github.com/nestjs/nest)
-https://nestjs.com/
 
 [NestJS 英文文档](https://docs.nestjs.com/)
 
@@ -41,8 +40,11 @@ $ npm run start:prod
 
 -   `Nest-Server-Tools`
 -   `NestJS Files`
--   `NestJS Files`
+-   `NestJs Snippets`
 -   `Database Client`
+-   `ESLint`
+-   `Prettier ESLint`
+-   `Prettier - Code formatter`
 
 ## 核心文件
 
