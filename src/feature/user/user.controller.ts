@@ -60,7 +60,9 @@ export class UserController {
     @ApiOperation({ summary: '用户登出' })
     @UseGuards(AuthGuard('jwt'))
     @Post('loginOut')
-    async loginOut(@Body() post: UserDOT.LoginOutUserDto) {
-        return await this.userService.LoginOut(post);
+    // 这里不接收参数，无需dot
+    async loginOut(@Body() post: {}, @Req() req) {
+        const userInfo = req.user; // 拿到请求的用户信息
+        return await this.userService.LoginOut(post, userInfo);
     }
 }

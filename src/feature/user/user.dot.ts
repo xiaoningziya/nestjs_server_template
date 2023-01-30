@@ -30,9 +30,3 @@ export class UpdatePasswordUserDto {
     @IsNotEmpty({ message: '新密码必填' })
     readonly new_password: string;
 }
-
-export class LoginOutUserDto {
-    // @ApiProperty({ description: '账号' })
-    // @IsNotEmpty({ message: '账号必填' })
-    // readonly account: string;
-}

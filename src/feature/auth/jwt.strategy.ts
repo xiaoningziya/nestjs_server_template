@@ -16,6 +16,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
 import { RedisCacheService } from '@/db/redis-cache.service';
+import * as CONST from '@/constant/token';
 
 export class JwtStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -74,12 +75,14 @@ export class JwtStorage extends PassportStrategy(Strategy) {
          * 在token认证通过后，重新设置过期时间
          * 因为使用的cache-manager没有通过直接更新有效期方法，通过重新设置来实现
          */
-        this.redisCacheService.cacheSet(
-            `${user.id}&${user.account}`,
-            token,
-            1800,
-        );
-
+        // 忽略无需续签的接口队列
+        if (!CONST.TOKEN_AUTOMATIC_RENEWAL_IGNORE_LIST.includes(req.url)) {
+            this.redisCacheService.cacheSet(
+                `${user.id}&${user.account}`,
+                token,
+                CONST.TOKEN_AUTOMATIC_RENEWAL_TIME,
+            );
+        }
         return existUser;
     }
 }

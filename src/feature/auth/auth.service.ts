@@ -5,7 +5,7 @@ import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { RedisCacheService } from '@/db/redis-cache.service';
-
+import * as CONST from '@/constant/token';
 @Injectable()
 export class AuthService {
     constructor(
@@ -33,7 +33,7 @@ export class AuthService {
         await this.redisCacheService.cacheSet(
             `${user.id}&${user.account}`,
             token,
-            1800,
+            CONST.TOKEN_FIRST_SET_TIME,
         );
         return { token };
     }

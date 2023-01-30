@@ -18,13 +18,22 @@ export class RedisCacheService {
         private cacheManager: Cache,
     ) {}
 
+    // 存入指定缓存
     cacheSet(key: string, value: string, ttl: number) {
         this.cacheManager.set(key, value, { ttl }, (err) => {
             if (err) throw err;
         });
     }
 
+    // 获取指定缓存
     async cacheGet(key: string): Promise<any> {
         return this.cacheManager.get(key);
+    }
+
+    // 清除指定缓存
+    async cacheDel(key: string): Promise<any> {
+        return this.cacheManager.del(key, (err) => {
+            if (err) throw err;
+        });
     }
 }

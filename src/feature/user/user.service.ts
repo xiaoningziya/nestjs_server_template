@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { RedisCacheService } from '@/db/redis-cache.service';
 var bcrypt = require('bcryptjs');
 export interface UserRo {
     userInfo: UserEntity;
@@ -12,6 +13,7 @@ export class UserService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
+        private redisCacheService: RedisCacheService,
     ) {}
 
     async findOne(id: string) {
@@ -19,7 +21,7 @@ export class UserService {
     }
 
     // 用户注册
-    async Register(post: Partial<UserEntity>): Promise<UserEntity> {
+    async Register(post: Partial<UserEntity>): Promise<{}> {
         const { account } = post;
         const user = await this.userRepository.findOne({ where: { account } });
         if (user) {
@@ -52,12 +54,13 @@ export class UserService {
                 }
          */
         const newUser = await this.userRepository.create(post);
-        return await this.userRepository.save(newUser);
+        await this.userRepository.save(newUser);
+        return {};
     }
 
     // 修改密码
-    async UpdatePassword(post, userInfo): Promise<UserEntity> {
-        const { id, password } = userInfo;
+    async UpdatePassword(post, userInfo): Promise<{}> {
+        const { id, password, account } = userInfo;
         const { old_password, new_password } = post;
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
@@ -78,16 +81,19 @@ export class UserService {
         const updatePost = this.userRepository.merge(user, {
             password: endPWD,
         });
-        return this.userRepository.save(updatePost);
+        // 清除redis存储的token,引导用户重新登录
+        this.redisCacheService.cacheDel(`${id}&${account}`);
+        await this.userRepository.save(updatePost);
+        return {};
     }
 
     // 用户登出
-    async LoginOut(post): Promise<{}> {
-        const { account } = post;
-        const user = await this.userRepository.findOne({ where: { account } });
-        if (!user) {
-            throw new HttpException('此账号不存在', 401);
-        }
+    async LoginOut(post, userInfo): Promise<{}> {
+        console.log('LoginOut', post); //
+        const { id, account } = userInfo;
+        const user = await this.userRepository.findOne({ where: { id } });
+        // 清除redis存储的token
+        this.redisCacheService.cacheDel(`${id}&${account}`);
         return {};
     }
 }
