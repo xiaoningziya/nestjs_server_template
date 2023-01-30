@@ -16,7 +16,9 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
 import { RedisCacheService } from '@/db/redis-cache.service';
+import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import * as CONST from '@/constant/token';
+import dayjs from 'dayjs';
 
 export class JwtStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -25,6 +27,8 @@ export class JwtStorage extends PassportStrategy(Strategy) {
         private readonly configService: ConfigService,
         private readonly authService: AuthService,
         private readonly redisCacheService: RedisCacheService,
+        @InjectRepository(UserTokenEntity)
+        private readonly UserTokenRepository: Repository<UserTokenEntity>,
     ) {
         super({
             /**
@@ -82,6 +86,16 @@ export class JwtStorage extends PassportStrategy(Strategy) {
                 token,
                 CONST.TOKEN_AUTOMATIC_RENEWAL_TIME,
             );
+            const findRow = await this.UserTokenRepository.findOne({
+                where: { uuid: user.id },
+            });
+            /**
+             * 使用<dayjs>的时间方法生成时间字符串替换库中的<update_time>
+             */
+            findRow.update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
+            // console.log('after findRow', findRow);
+            const updatePost = this.UserTokenRepository.merge(findRow, {});
+            await this.UserTokenRepository.save(updatePost);
         }
         return existUser;
     }

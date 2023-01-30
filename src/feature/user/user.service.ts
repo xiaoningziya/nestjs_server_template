@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { RedisCacheService } from '@/db/redis-cache.service';
+import { UserTokenEntity } from '@/feature/auth/auth.entity';
 var bcrypt = require('bcryptjs');
 export interface UserRo {
     userInfo: UserEntity;
@@ -14,6 +15,8 @@ export class UserService {
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
         private redisCacheService: RedisCacheService,
+        @InjectRepository(UserTokenEntity)
+        private readonly UserTokenRepository: Repository<UserTokenEntity>,
     ) {}
 
     async findOne(id: string) {
@@ -91,7 +94,9 @@ export class UserService {
     async LoginOut(post, userInfo): Promise<{}> {
         console.log('LoginOut', post); //
         const { id, account } = userInfo;
-        const user = await this.userRepository.findOne({ where: { id } });
+        // const user = await this.userRepository.findOne({ where: { id } });
+        // 删除登录表中的此用户
+        this.UserTokenRepository.delete({ uuid: id });
         // 清除redis存储的token
         this.redisCacheService.cacheDel(`${id}&${account}`);
         return {};

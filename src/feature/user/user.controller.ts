@@ -54,10 +54,10 @@ export class UserController {
     }
 
     /**
-     * 用户登出
+     * 退出登录
      * @param post
      */
-    @ApiOperation({ summary: '用户登出' })
+    @ApiOperation({ summary: '退出登录' })
     @UseGuards(AuthGuard('jwt'))
     @Post('loginOut')
     // 这里不接收参数，无需dot

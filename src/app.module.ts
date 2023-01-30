@@ -9,6 +9,7 @@ import { AuthModule } from './feature/auth/auth.module';
 import envConfig from '../config/env';
 import { PostsEntity } from './feature/posts/posts.entity';
 import { UserEntity } from './feature/user/user.entity';
+import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import { RedisCacheModule } from '@/db/redis-cache.module';
 
 // 业务相关的Modules,组合后在入口解构
@@ -19,6 +20,8 @@ const FeatureModuleList: Array<typeof PostsModule> = [
     AuthModule,
     RedisCacheModule,
 ];
+// 数据表集合
+const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -30,7 +33,7 @@ const FeatureModuleList: Array<typeof PostsModule> = [
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => ({
                 type: 'mysql', // 数据库类型
-                entities: [PostsEntity, UserEntity], // 数据表实体
+                entities: Entities, // 数据表实体
                 // autoLoadEntities: true, // 可以打开此配置项，表示<entities>配置自动引入，避免忘记
                 host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
                 port: configService.get<number>('DB_PORT', 3306), // 端口号

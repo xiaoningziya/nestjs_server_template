@@ -5,13 +5,17 @@ import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { RedisCacheService } from '@/db/redis-cache.service';
+import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import * as CONST from '@/constant/token';
+
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
         private userService: UserService,
         private redisCacheService: RedisCacheService,
+        @InjectRepository(UserTokenEntity)
+        private readonly UserTokenRepository: Repository<UserTokenEntity>,
     ) {}
 
     // 生成token
@@ -19,7 +23,7 @@ export class AuthService {
         return await this.jwtService.sign(user);
     }
 
-    async login(user: Partial<UserEntity>) {
+    async login(user: Partial<UserEntity>, req) {
         // 传入 id 和 account 序列化一个token
         const token = await this.createToken({
             id: user.id,
@@ -35,6 +39,22 @@ export class AuthService {
             token,
             CONST.TOKEN_FIRST_SET_TIME,
         );
+        // 组合数据入库
+        const row: Partial<UserTokenEntity> = {
+            uuid: user.id,
+            nickname: user.nickname || '',
+            account: user.account || '',
+            token: token,
+        };
+        const findRow = await this.UserTokenRepository.findOne({
+            where: { uuid: user.id },
+        });
+        if (findRow) {
+            await this.UserTokenRepository.delete({ uuid: user.id });
+        }
+        const newUser = await this.UserTokenRepository.create(row);
+        await this.UserTokenRepository.save(newUser);
+
         return { token };
     }
 

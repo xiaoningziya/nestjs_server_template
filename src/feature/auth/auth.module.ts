@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtStorage } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
+import { UserTokenEntity } from './auth.entity';
 import { RedisCacheModule } from '@/db/redis-cache.module';
 
 /**
@@ -28,6 +29,7 @@ const jwtModule = JwtModule.registerAsync({
 @Module({
     imports: [
         TypeOrmModule.forFeature([UserEntity]),
+        TypeOrmModule.forFeature([UserTokenEntity]),
         PassportModule,
         jwtModule,
         UserModule,

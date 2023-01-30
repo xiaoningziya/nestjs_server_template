@@ -12,7 +12,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from '../user/user.dot';
 import { AuthService } from './auth.service';
 
-@ApiTags('验证')
+@ApiTags('AUTH 认证')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
@@ -20,14 +20,15 @@ export class AuthController {
     /**
      * 账号密码登录
      */
-    @ApiOperation({ summary: '登录' })
+    @ApiOperation({ summary: '认证登录' })
     // @UseGuards：使用守卫  @AuthGuard：认证守卫
     @UseGuards(AuthGuard('local'))
     @UseInterceptors(ClassSerializerInterceptor)
     @Post('login')
     async login(@Body() user: LoginUserDto, @Req() req) {
         console.log('login', user);
-        return await this.authService.login(req.user);
+        const userInfo = req.user;
+        return await this.authService.login(req.user, userInfo);
     }
 
     /**
