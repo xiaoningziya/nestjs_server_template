@@ -42,3 +42,22 @@
 -   HTTP `DELETE` 请求：用于删除已有资源。例如：'/users/1' 用于删除 id 为 1 的用户。
     > UsersController 控制器使用 @Get、@Post、@Put、@Delete 装饰器声明了若干个路由处理程序。分别对应了 HTTP GET、POST、PUT 和 DELETE 请求。
     > 你也可以使用 app.route().get()、app.route().post() 等方法来实现 RESTful API。
+
+# 实体监听装饰器
+
+> 其实是 typeorm 在操作数据库时的生命周期，可以更方便的操作数据
+
+-   查找后：`@AfterLoad`
+-   插入前：`@BeforeInsert`
+-   插入后：`@AfterInsert`
+-   更新前：`@BeforeUpdate`
+-   更新后：`@AfterUpdate`
+-   删除前：`@BeforeRemove`
+
+# 增删改查的三种方式
+
+> 其实底层最终都会生成 sql 语句，只是封装了几种方式而已，方便人们使用
+
+-   第一种：使用 sql 语句，适用于 sql 语句熟练的同学
+-   第二种：typeorm 封装好的方法，增删改 + 简单查询
+-   第三种：QueryBuilder 查询生成器，适用于关系查询，多表查询，复杂查询

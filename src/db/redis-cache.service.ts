@@ -40,4 +40,9 @@ export class RedisCacheService {
             if (err) throw err;
         });
     }
+
+    // 清空redis的缓存
+    async cacheClear(key: string): Promise<any> {
+        return this.cacheManager.reset();
+    }
 }
