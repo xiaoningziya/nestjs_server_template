@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from './core/filter/transform.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { PORT, IP } from './constant/listen';
 import { SwaggerConfig } from './extract/swagger';
+import { join } from 'path';
 
 async function runServer() {
     // NestFactory 暴露了一些静态方法用于创建应用程序的实例。
@@ -25,6 +26,18 @@ async function runServer() {
     app.useGlobalInterceptors(new TransformInterceptor());
     // 设置swagger文档
     new SwaggerConfig(app).Init();
+    // 配置静态资源目录
+    app.useStaticAssets(join(__dirname, '../../public'), {
+        // 配置虚拟目录，比如 http://localhost:3001/static/002.png 来访问public目录里面的文件
+        prefix: '/static/', // 设置虚拟路径
+    });
+    // 配置模板渲染引擎
+    app.setBaseViewsDir(join(__dirname, '../../views'));
+    /**
+     * @desc 配置模版引擎使用规则
+     * @params ejs 和 hbs 二选一即可
+     */
+    app.setViewEngine('ejs');
     // 全局注册一下管道ValidationPipe
     app.useGlobalPipes(new ValidationPipe());
     // 开启服务监听

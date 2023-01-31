@@ -61,6 +61,8 @@ $ npm run start:prod
 -   映射数据库表使用：`TypeORM`
 -   验证入参配置 DTO 规则 `class-validator`
 -   包装出参全局配置 `过滤器 & 拦截器`
+-   配置`/public`为静态资源目录,模拟存储
+-   配置`/views`为页面渲染资源,配合<ejs>能力实现模版渲染
 -   前后端认证方案使用 `JWT`
 -   可视化： `MySQL Workbench community-8.0.27`
 -   数据库： `mysql-8.0.31macos12`
