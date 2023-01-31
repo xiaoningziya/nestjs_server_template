@@ -25,7 +25,6 @@ export class LocalStorage extends PassportStrategy(Strategy) {
     }
 
     async validate(account: string, password: string) {
-        console.log('local', account, password);
         // 因为密码是加密后的，没办法直接对比用户名密码，只能先根据用户名查出用户，再比对密码
         const user = await this.userRepository
             .createQueryBuilder('user')

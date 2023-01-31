@@ -1,12 +1,13 @@
 import { Controller, Get, Redirect, Render } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('顶级路由：/api')
 @Controller()
 export class AppController {
     constructor(private readonly appService: AppService) {}
 
+    @ApiOperation({ summary: '前台 访问：/api/default' })
     @Get('default') // 前台 访问：/api/default
     @Render('default/index') // 使用render渲染模板引擎，参数就是 /views 文件夹下的 index.ejs
     defaultIndex() {
@@ -16,6 +17,7 @@ export class AppController {
         };
     }
 
+    @ApiOperation({ summary: '后台 访问：/api/admin' })
     @Get('admin') // 后台 访问：/api/admin
     @Render('admin/index') // 使用render渲染模板引擎，参数就是 /views 文件夹下的 index.ejs
     adminIndex() {

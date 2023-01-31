@@ -92,7 +92,6 @@ export class UserService {
 
     // 用户登出
     async LoginOut(post, userInfo): Promise<{}> {
-        console.log('LoginOut', post); //
         const { id, account } = userInfo;
         // const user = await this.userRepository.findOne({ where: { id } });
         // 删除登录表中的此用户

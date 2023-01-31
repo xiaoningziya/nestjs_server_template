@@ -10,8 +10,10 @@ import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { HttpExceptionFilter } from './core/filter/transform.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { PORT, IP } from './constant/listen';
-import { SwaggerConfig } from './extract/swagger';
+import { SwaggerConfig } from './common/swagger';
 import { join } from 'path';
+import helmet from 'helmet';
+// import csurf from 'csurf';
 
 async function runServer() {
     // NestFactory 暴露了一些静态方法用于创建应用程序的实例。
@@ -24,6 +26,14 @@ async function runServer() {
     app.useGlobalFilters(new HttpExceptionFilter());
     // 全局注册拦截器
     app.useGlobalInterceptors(new TransformInterceptor());
+    // 跨域资源共享
+    app.enableCors(); // 允许跨站访问 或：const app = await NestFactory.create(AppModule, { cors: true });
+    // 防止跨站脚本攻击
+    app.use(helmet());
+    // CSRF保护：跨站点请求伪造
+    // app.use(csurf({ cookie: true }));
+    // 全局注册 日志中间件
+    // app.use(new LoggerMiddleware().use());
     // 设置swagger文档
     new SwaggerConfig(app).Init();
     // 配置静态资源目录

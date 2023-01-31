@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { UserTokenEntity } from './auth.entity';
 import { RedisCacheModule } from '@/db/redis-cache.module';
+import { ToolsCaptcha } from '@/common/captcha';
 
 /**
  * 这里不建议将秘钥写死在代码也， 它应该和数据库配置的数据一样，从环境变量中来
@@ -36,7 +37,7 @@ const jwtModule = JwtModule.registerAsync({
         RedisCacheModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, LocalStorage, JwtStorage],
+    providers: [AuthService, LocalStorage, JwtStorage, ToolsCaptcha],
     exports: [jwtModule],
 })
 export class AuthModule {}

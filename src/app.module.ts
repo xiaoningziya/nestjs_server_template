@@ -1,4 +1,11 @@
-import { DynamicModule, ForwardReference, Module, Type } from '@nestjs/common';
+import {
+    DynamicModule,
+    ForwardReference,
+    MiddlewareConsumer,
+    Module,
+    RequestMethod,
+    Type,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +18,11 @@ import { PostsEntity } from './feature/posts/posts.entity';
 import { UserEntity } from './feature/user/user.entity';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import { RedisCacheModule } from '@/db/redis-cache.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { LoggerMiddleware } from '@/core/middleware/logger.middleware';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from '@/feature/tasks/tasks.module';
 
 // 业务相关的Modules,组合后在入口解构
 const FeatureModuleList: Array<typeof PostsModule> = [
@@ -27,6 +39,16 @@ const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];
         ConfigModule.forRoot({
             isGlobal: true, // 设置为全局
             envFilePath: [envConfig.path],
+        }),
+        ScheduleModule.forRoot(),
+        TasksModule,
+        /**
+         * @desc 限速：限制客户端在一定时间内的请求次数
+         * 此处限制1分钟内最多10次请求
+         */
+        ThrottlerModule.forRoot({
+            ttl: 60, // 1分钟内
+            limit: 10, // 最多请求10次
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
@@ -47,6 +69,22 @@ const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];
         ...FeatureModuleList,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
 })
-export class AppModule {}
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(LoggerMiddleware) // 应用中间件
+            // .exclude({ path: 'user', method: RequestMethod.POST }) // 排除user的post方法
+            .forRoutes('*'); // 监听路径  参数：路径名或*，*是匹配所以的路由
+        // .forRoutes({ path: 'user', method: RequestMethod.POST }, { path: 'album', method: RequestMethod.ALL }); //多个
+        // .apply(UserMiddleware) // 支持多个中间件
+        // .forRoutes('user')
+    }
+}
