@@ -1,4 +1,12 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    BeforeInsert,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 var bcrypt = require('bcryptjs');
 
@@ -24,11 +32,23 @@ export class UserEntity {
     @Column({ default: '' })
     avatar: string;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn({
+        type: 'timestamp',
+        comment: '创建时间',
+    })
     create_time: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn({
+        type: 'timestamp',
+        comment: '更新时间',
+    })
     update_time: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        comment: '删除时间',
+    })
+    delete_time: Date;
 
     /**
      * @func 在密码入库前加密替换

@@ -80,6 +80,10 @@ $ npm run start:prod
         ```bash
         $ /opt/homebrew/opt/redis/bin/redis-server /opt/homebrew/etc/redis.conf
         ```
+    -   进入认证环境：`redis-cli -h 127.0.0.1 -p 6379 -a password`
+    -   认证账户：`auth 182`
+    -   查看当前存在的服务和 PID`ps axu|grep redis`
+    -   强制退出 redis 服务：`sudo kill -9 18505`（18505 数字位对应上条命令输出的第二列字段）
     -   域名：`127.0.0.1`
     -   端口：`6379`
     -   密码：`182`

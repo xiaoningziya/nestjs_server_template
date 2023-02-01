@@ -92,7 +92,8 @@ export class JwtStorage extends PassportStrategy(Strategy) {
             /**
              * 使用<dayjs>的时间方法生成时间字符串替换库中的<update_time>
              */
-            findRow.update_time = dayjs().format('YYYY-MM-DD HH:mm:ss');
+            findRow.update_time = new Date();
+            console.log('时间转时间戳方法==>', findRow.update_time.getTime());
             const updatePost = this.UserTokenRepository.merge(findRow, {});
             await this.UserTokenRepository.save(updatePost);
         }

@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    PrimaryColumn,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import dayjs from 'dayjs';
 
 /**
@@ -23,9 +31,27 @@ export class UserTokenEntity {
     @Column({ length: 20, default: '' })
     nickname: string;
 
-    @Column({ default: dayjs().format('YYYY-MM-DD HH:mm:ss') })
-    create_time: string;
+    // @Column({ default: dayjs().format('YYYY-MM-DD HH:mm:ss') })
+    // create_time: string;
 
-    @Column({ default: dayjs().format('YYYY-MM-DD HH:mm:ss') })
-    update_time: string;
+    // @Column({ default: dayjs().format('YYYY-MM-DD HH:mm:ss') })
+    // update_time: string;
+
+    @CreateDateColumn({
+        type: 'timestamp',
+        comment: '创建时间',
+    })
+    create_time: Date;
+
+    @UpdateDateColumn({
+        type: 'timestamp',
+        comment: '更新时间',
+    })
+    update_time: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        comment: '删除时间',
+    })
+    delete_time: Date;
 }
