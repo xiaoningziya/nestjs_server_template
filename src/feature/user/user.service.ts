@@ -28,7 +28,7 @@ export class UserService {
         const { account } = post;
         const user = await this.userRepository.findOne({ where: { account } });
         if (user) {
-            throw new HttpException('账号已存在', 401);
+            throw new HttpException('账号已存在', 200);
         }
         /**
          * @desc 问题标记 
@@ -67,15 +67,15 @@ export class UserService {
         const { old_password, new_password } = post;
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
-            throw new HttpException('此账号不存在', 401);
+            throw new HttpException('此账号不存在', 200);
         }
         // 判断新旧密码一致性
         // 使用<compareSync>方法进行新旧密码对比
         if (new_password === old_password) {
-            throw new HttpException('新密码与原密码一致', 401);
+            throw new HttpException('新密码与原密码一致', 200);
         }
         if (!bcrypt.compareSync(old_password, password)) {
-            throw new HttpException('原密码不正确', 401);
+            throw new HttpException('原密码不正确', 200);
         }
         // 将新密码单独加密
         const salt = await bcrypt.genSaltSync(10);
@@ -99,5 +99,21 @@ export class UserService {
         // 清除redis存储的token
         this.redisCacheService.cacheDel(`${id}&${account}`);
         return {};
+    }
+
+    // 创建用户假数据
+    async mockData() {
+        const new_user = {
+            account: String(
+                Math.floor(Math.random() * 10 + new Date().getTime()),
+            ),
+            password: '111',
+        };
+        const user = await this.userRepository.findOne({
+            where: { account: new_user.account },
+        });
+        if (user) return;
+        const newUser = await this.userRepository.create(new_user);
+        await this.userRepository.save(newUser);
     }
 }

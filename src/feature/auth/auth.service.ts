@@ -50,7 +50,7 @@ export class AuthService {
             where: { uuid: user.id },
         });
         if (findRow) {
-            await this.UserTokenRepository.delete({ uuid: user.id });
+            await this.UserTokenRepository.remove(findRow);
         }
         const newUser = await this.UserTokenRepository.create(row);
         await this.UserTokenRepository.save(newUser);

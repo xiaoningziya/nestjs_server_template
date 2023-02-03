@@ -9,7 +9,7 @@ import { IStrategyOptions, Strategy } from 'passport-local';
 import { UserEntity } from '../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, HttpException } from '@nestjs/common';
 
 export class LocalStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -33,11 +33,13 @@ export class LocalStorage extends PassportStrategy(Strategy) {
             .getOne();
 
         if (!user) {
-            throw new BadRequestException('用户名不正确！');
+            throw new HttpException('用户名不正确！', 200);
+            // throw new BadRequestException('用户名不正确！');
         }
 
         if (!compareSync(password, user.password)) {
-            throw new BadRequestException('密码错误！');
+            throw new HttpException('密码错误！', 200);
+            // throw new BadRequestException('密码错误！');
         }
 
         return user;

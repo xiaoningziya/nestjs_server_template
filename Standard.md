@@ -61,3 +61,28 @@
 -   第一种：使用 sql 语句，适用于 sql 语句熟练的同学
 -   第二种：typeorm 封装好的方法，增删改 + 简单查询
 -   第三种：QueryBuilder 查询生成器，适用于关系查询，多表查询，复杂查询
+
+# `Query Builder` & `Repository API` 的不同用法
+
+```
+// 设置缓存 - queryBuilder
+
+const users = await connection
+  .createQueryBuilder(User, "user")
+  .where("user.isAdmin = :isAdmin", { isAdmin: true })
+  .cache("users_admins", 25000)
+  .getMany();
+
+
+// 设置缓存 - repository
+const users = await connection.getRepository(User).find({
+  where: { isAdmin: true },
+  cache: {
+    id: "users_admins",
+    milisseconds: 25000
+  }
+});
+
+// 清理缓存
+await connection.queryResultCache.remove(["users_admins"]);
+```
