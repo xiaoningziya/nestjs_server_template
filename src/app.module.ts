@@ -47,8 +47,8 @@ const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];
          * 此处限制1分钟内最多10次请求
          */
         ThrottlerModule.forRoot({
-            ttl: 60, // 1分钟内
-            limit: 10, // 最多请求10次
+            ttl: 5, // 5秒内
+            limit: 5, // 最多请求5次
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],

@@ -116,4 +116,159 @@ export class UserService {
         const newUser = await this.userRepository.create(new_user);
         await this.userRepository.save(newUser);
     }
+
+    // 获取用户列表(分页)
+    async GetUserList(post) {
+        const { pagenum = 1, pagesize = 10 } = post;
+        const qb = this.userRepository.createQueryBuilder('user'); // qb实体
+        qb.withDeleted(); // 指示是否应在实体结果中包含软删除的行
+        qb.select([
+            'user.id',
+            'user.account',
+            'user.nickname',
+            'user.avatar',
+            'user.create_time',
+            'user.update_time',
+            'user.delete_time',
+        ]); // 需要的属性
+        // qb.where("user.id = :id", { id: 1 }) // 条件语句
+        qb.orderBy('user.create_time', 'ASC'); // @arguments[1]: 'ASC' 升序 'DESC' 降序
+        const count = await qb.getCount(); // 查总数
+        qb.offset(pagesize * (pagenum - 1)); // 偏移位置
+        qb.limit(pagesize); // 条数
+        const list = await qb.getMany(); // getMany() 获取所有用户
+        return {
+            list,
+            count,
+        };
+    }
+
+    // 拉黑单个用户
+    async DeleteUser(post) {
+        const { id } = post;
+        const item = await this.userRepository.findOne({
+            where: { id } as any,
+            withDeleted: true, // 指示是否应在实体结果中包含软删除的行
+        });
+        console.log('item', item);
+        if (item) {
+            await this.userRepository.softRemove(item);
+            return {};
+        } else {
+            throw new HttpException('用户不存在', 200);
+        }
+    }
+
+    // 恢复单个用户
+    async RecoverUser(post) {
+        const { id } = post;
+        const item = await this.userRepository.findOne({
+            where: { id } as any,
+            withDeleted: true,
+        });
+        if (item) {
+            await this.userRepository.recover(item);
+            return {};
+        } else {
+            throw new HttpException('用户不存在', 200);
+        }
+    }
+
+    // 查询登录表用户(分页) Mysql
+    async GetLoginUser(post) {
+        const { pagenum = 1, pagesize = 10 } = post;
+        const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
+        qb.select([
+            'user.id',
+            'user.uuid',
+            'user.token',
+            'user.account',
+            'user.nickname',
+            'user.create_time',
+            'user.update_time',
+        ]); // 需要的属性
+        qb.orderBy('user.create_time', 'ASC'); // @arguments[1]: 'ASC' 升序 'DESC' 降序
+        const count = await qb.getCount(); // 查总数
+        qb.offset(pagesize * (pagenum - 1)); // 偏移位置
+        qb.limit(pagesize); // 条数
+        const list = await qb.getMany(); // getMany() 获取所有用户
+        return {
+            list,
+            count,
+        };
+    }
+
+    // 查询登录表用户(分页) Redis
+    async GetCatchLoginUser(post) {
+        const keys = await this.redisCacheService.cacheStoreKeys();
+        console.log('redis', keys);
+        if (keys?.length) {
+            let datas = [];
+            for (let i = 0; i < keys.length; i++) {
+                const val = await this.redisCacheService.cacheGet(keys[i]);
+                if (val) {
+                    datas.push({
+                        KEY: keys[i],
+                        VALUE: val,
+                        uuid: keys[i].split('&')[0],
+                        account: keys[i].split('&')[1],
+                        token: val,
+                    });
+                }
+            }
+            return {
+                list: datas,
+                count: datas.length,
+            };
+        }
+        return {};
+        // const { pagenum = 1, pagesize = 10 } = post;
+        // const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
+        // qb.select([
+        //     'user.id',
+        //     'user.uuid',
+        //     'user.token',
+        //     'user.account',
+        //     'user.nickname',
+        //     'user.create_time',
+        //     'user.update_time',
+        // ]); // 需要的属性
+        // qb.orderBy('user.create_time', 'ASC'); // @arguments[1]: 'ASC' 升序 'DESC' 降序
+        // const count = await qb.getCount(); // 查总数
+        // qb.offset(pagesize * (pagenum - 1)); // 偏移位置
+        // qb.limit(pagesize); // 条数
+        // const list = await qb.getMany(); // getMany() 获取所有用户
+        // return {
+        //     list,
+        //     count,
+        // };
+    }
+
+    // 下线单个用户
+    async OfflineUser(post) {
+        const { id, account } = post;
+        // 查找登录表里的用户
+        const findRow = await this.UserTokenRepository.findOne({
+            where: { uuid: id },
+        });
+        if (findRow) {
+            // 删除登录表中的用户
+            await this.UserTokenRepository.remove(findRow);
+            // 清除redis缓存里的用户
+            this.redisCacheService.cacheDel(`${id}&${account}`);
+            return {};
+        } else {
+            throw new HttpException('用户不存在', 200);
+        }
+    }
+
+    // 下线所有用户
+    async OfflineAllUser(post) {
+        const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
+        // 清空 登录表
+        qb.delete().execute();
+        // 清空 redis
+        this.redisCacheService.cacheClear();
+        return {};
+    }
 }

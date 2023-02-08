@@ -10,7 +10,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp(); // 获取请求上下文
         const response = ctx.getResponse(); // 获取请求上下文中的 response对象
-        const status = exception.getStatus(); // 获取异常状态码
+        let status = exception.getStatus(); // 获取异常状态码
         /**
          * @todo 这里后期要根据<status>状态码，对应的去映射<code>码给前端
          * code === -1 ：前端直接全局报message的错
@@ -34,6 +34,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         // 单独拦截<Unauthorized> , 以中文形式返回给客户端 , 一般token不正确会进入
         if (validMessage === 'Unauthorized') {
             validMessage = '未经授权的请求';
+        }
+        if (
+            validMessage === 'ThrottlerException: Too Many Requests' ||
+            message === 'ThrottlerException: Too Many Requests'
+        ) {
+            validMessage = '操作频率过高';
         }
         const errorResponse = {
             data: {},

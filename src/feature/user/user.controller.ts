@@ -65,4 +65,81 @@ export class UserController {
         const userInfo = req.user; // 拿到请求的用户信息
         return await this.userService.LoginOut(post, userInfo);
     }
+
+    /**
+     * 获取用户列表
+     * @param post
+     */
+    @ApiOperation({ summary: '获取用户列表' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('getUserList')
+    async getUserList(@Body() post: UserDOT.GetUserListUserDto, @Req() req) {
+        return await this.userService.GetUserList(post);
+    }
+
+    /**
+     * 删除单个用户(拉黑)
+     * @param post
+     */
+    @ApiOperation({ summary: '删除单个用户(拉黑)' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('deleteUser')
+    async deleteUser(@Body() post: {}, @Req() req) {
+        return await this.userService.DeleteUser(post);
+    }
+
+    /**
+     * 恢复单个用户
+     * @param post
+     */
+    @ApiOperation({ summary: '恢复单个用户' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('recoverUser')
+    async recoverUser(@Body() post: {}, @Req() req) {
+        return await this.userService.RecoverUser(post);
+    }
+
+    /**
+     * 查询登录表用户(分页) Mysql
+     * @param post
+     */
+    @ApiOperation({ summary: '查询登录表用户(分页) Mysql' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('getLoginUser')
+    async getLoginUser(@Body() post: {}, @Req() req) {
+        return await this.userService.GetLoginUser(post);
+    }
+
+    /**
+     * 查询登录表用户(分页) Redis
+     * @param post
+     */
+    @ApiOperation({ summary: '查询登录表用户(分页) Redis' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('getCatchLoginUser')
+    async getCatchLoginUser(@Body() post: {}, @Req() req) {
+        return await this.userService.GetCatchLoginUser(post);
+    }
+
+    /**
+     * 下线单个用户
+     * @param post
+     */
+    @ApiOperation({ summary: '下线单个用户' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('offlineUser')
+    async offlineUser(@Body() post: {}, @Req() req) {
+        return await this.userService.OfflineUser(post);
+    }
+
+    /**
+     * 下线所有用户
+     * @param post
+     */
+    @ApiOperation({ summary: '下线所有用户' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('offlineAllUser')
+    async offlineAllUser(@Body() post: {}, @Req() req) {
+        return await this.userService.OfflineAllUser(post);
+    }
 }

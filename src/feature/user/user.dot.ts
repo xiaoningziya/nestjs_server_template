@@ -1,5 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { DataListCommonDto } from '@/common/dto.common';
 
 export class RegisterUserDto {
     @ApiProperty({ description: '账号' })
@@ -30,3 +31,5 @@ export class UpdatePasswordUserDto {
     @IsNotEmpty({ message: '新密码必填' })
     readonly new_password: string;
 }
+
+export class GetUserListUserDto extends DataListCommonDto {}

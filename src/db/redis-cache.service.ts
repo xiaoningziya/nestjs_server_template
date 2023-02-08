@@ -41,8 +41,13 @@ export class RedisCacheService {
         });
     }
 
-    // 清空redis的缓存
-    async cacheClear(key: string): Promise<any> {
+    // 清空redis全部缓存
+    async cacheClear(): Promise<any> {
         return this.cacheManager.reset();
+    }
+
+    // 查询redis全部Key
+    async cacheStoreKeys(): Promise<any> {
+        return this.cacheManager.store.keys();
     }
 }
