@@ -19,6 +19,7 @@ import { RedisCacheService } from '@/db/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import * as CONST from '@/constant/token';
 import dayjs from 'dayjs';
+import * as REDIS from '@/constant/redis';
 
 export class JwtStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -55,7 +56,7 @@ export class JwtStorage extends PassportStrategy(Strategy) {
          */
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
         const cacheToken = await this.redisCacheService.cacheGet(
-            `${user.id}&${user.account}`,
+            `${REDIS.RedisPrefixToken}${user.id}&${user.account}`,
         );
         if (!cacheToken) {
             throw new UnauthorizedException('token 已过期');
@@ -82,7 +83,7 @@ export class JwtStorage extends PassportStrategy(Strategy) {
         // 忽略无需续签的接口队列
         if (!CONST.TOKEN_AUTOMATIC_RENEWAL_IGNORE_LIST.includes(req.url)) {
             this.redisCacheService.cacheSet(
-                `${user.id}&${user.account}`,
+                `${REDIS.RedisPrefixToken}${user.id}&${user.account}`,
                 token,
                 CONST.TOKEN_AUTOMATIC_RENEWAL_TIME,
             );

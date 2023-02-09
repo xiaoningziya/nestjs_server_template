@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RedisCacheService } from '@/db/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import * as CONST from '@/constant/token';
+import * as REDIS from '@/constant/redis';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,20 @@ export class AuthService {
         return await this.jwtService.sign(user);
     }
 
-    async login(user: Partial<UserEntity>, req) {
+    async login(post, user: Partial<UserEntity>) {
+        // 验证码校验判断
+        if (!post.VerificationCode) {
+            throw new HttpException('缺少验证码', 200);
+        } else {
+            const key = `${REDIS.RedisPrefixCaptcha}${post.VerificationCode}`;
+            const value = await this.redisCacheService.cacheGet(key);
+            if (!value) {
+                throw new HttpException('验证码不正确', 200);
+            } else {
+                // 验证完之后，删掉此验证码
+                this.redisCacheService.cacheDel(key);
+            }
+        }
         // 传入 id 和 account 序列化一个token
         const token = await this.createToken({
             id: user.id,
@@ -35,7 +49,7 @@ export class AuthService {
          * 在登录时，将jwt生成的token，存入redis,并设置有效期为30分钟。存入redis的key由用户信息组成， value是token值
          */
         await this.redisCacheService.cacheSet(
-            `${user.id}&${user.account}`,
+            `${REDIS.RedisPrefixToken}${user.id}&${user.account}`,
             token,
             CONST.TOKEN_FIRST_SET_TIME,
         );

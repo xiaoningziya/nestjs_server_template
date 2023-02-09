@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import { RedisCacheService } from '@/db/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 var bcrypt = require('bcryptjs');
+import * as REDIS from '@/constant/redis';
 export interface UserRo {
     userInfo: UserEntity;
 }
@@ -85,7 +86,9 @@ export class UserService {
             password: endPWD,
         });
         // 清除redis存储的token,引导用户重新登录
-        this.redisCacheService.cacheDel(`${id}&${account}`);
+        this.redisCacheService.cacheDel(
+            `${REDIS.RedisPrefixToken}${id}&${account}`,
+        );
         await this.userRepository.save(updatePost);
         return {};
     }
@@ -97,7 +100,9 @@ export class UserService {
         // 删除登录表中的此用户
         this.UserTokenRepository.delete({ uuid: id });
         // 清除redis存储的token
-        this.redisCacheService.cacheDel(`${id}&${account}`);
+        this.redisCacheService.cacheDel(
+            `${REDIS.RedisPrefixToken}${id}&${account}`,
+        );
         return {};
     }
 
@@ -200,18 +205,21 @@ export class UserService {
 
     // 查询登录表用户(分页) Redis
     async GetCatchLoginUser(post) {
-        const keys = await this.redisCacheService.cacheStoreKeys();
-        console.log('redis', keys);
+        const arr = await this.redisCacheService.cacheStoreKeys();
+        const keys = arr.filter(
+            (item) => item.indexOf(REDIS.RedisPrefixToken) > -1,
+        );
         if (keys?.length) {
             let datas = [];
             for (let i = 0; i < keys.length; i++) {
                 const val = await this.redisCacheService.cacheGet(keys[i]);
                 if (val) {
+                    let noPrefix = keys[i].split(REDIS.RedisPrefixToken[1]); // 不包含前缀的值
                     datas.push({
                         KEY: keys[i],
                         VALUE: val,
-                        uuid: keys[i].split('&')[0],
-                        account: keys[i].split('&')[1],
+                        uuid: noPrefix.split('&')[0],
+                        account: noPrefix.split('&')[1],
                         token: val,
                     });
                 }
@@ -222,26 +230,6 @@ export class UserService {
             };
         }
         return {};
-        // const { pagenum = 1, pagesize = 10 } = post;
-        // const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
-        // qb.select([
-        //     'user.id',
-        //     'user.uuid',
-        //     'user.token',
-        //     'user.account',
-        //     'user.nickname',
-        //     'user.create_time',
-        //     'user.update_time',
-        // ]); // 需要的属性
-        // qb.orderBy('user.create_time', 'ASC'); // @arguments[1]: 'ASC' 升序 'DESC' 降序
-        // const count = await qb.getCount(); // 查总数
-        // qb.offset(pagesize * (pagenum - 1)); // 偏移位置
-        // qb.limit(pagesize); // 条数
-        // const list = await qb.getMany(); // getMany() 获取所有用户
-        // return {
-        //     list,
-        //     count,
-        // };
     }
 
     // 下线单个用户
@@ -255,7 +243,9 @@ export class UserService {
             // 删除登录表中的用户
             await this.UserTokenRepository.remove(findRow);
             // 清除redis缓存里的用户
-            this.redisCacheService.cacheDel(`${id}&${account}`);
+            this.redisCacheService.cacheDel(
+                `${REDIS.RedisPrefixToken}${id}&${account}`,
+            );
             return {};
         } else {
             throw new HttpException('用户不存在', 200);
@@ -267,8 +257,18 @@ export class UserService {
         const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
         // 清空 登录表
         qb.delete().execute();
-        // 清空 redis
-        this.redisCacheService.cacheClear();
+        // // 清空 redis
+        // this.redisCacheService.cacheClear();
+        // return {};
+        const arr = await this.redisCacheService.cacheStoreKeys();
+        const keys = arr.filter(
+            (item) => item.indexOf(REDIS.RedisPrefixToken) > -1,
+        );
+        if (keys?.length) {
+            for (let i = 0; i < keys.length; i++) {
+                await this.redisCacheService.cacheDel(keys[i]);
+            }
+        }
         return {};
     }
 }
