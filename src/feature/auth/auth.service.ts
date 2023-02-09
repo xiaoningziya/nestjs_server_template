@@ -8,12 +8,15 @@ import { RedisCacheService } from '@/db/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 import * as CONST from '@/constant/token';
 import * as REDIS from '@/constant/redis';
+import { ToolsCaptcha } from '@/common/captcha';
+import { CreateEncrypt } from '@/common/encrypt';
 
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
         private userService: UserService,
+        private readonly toolsCaptcha: ToolsCaptcha,
         private redisCacheService: RedisCacheService,
         @InjectRepository(UserTokenEntity)
         private readonly UserTokenRepository: Repository<UserTokenEntity>,
@@ -25,19 +28,6 @@ export class AuthService {
     }
 
     async login(post, user: Partial<UserEntity>) {
-        // 验证码校验判断
-        if (!post.VerificationCode) {
-            throw new HttpException('缺少验证码', 200);
-        } else {
-            const key = `${REDIS.RedisPrefixCaptcha}${post.VerificationCode}`;
-            const value = await this.redisCacheService.cacheGet(key);
-            if (!value) {
-                throw new HttpException('验证码不正确', 200);
-            } else {
-                // 验证完之后，删掉此验证码
-                this.redisCacheService.cacheDel(key);
-            }
-        }
         // 传入 id 和 account 序列化一个token
         const token = await this.createToken({
             id: user.id,
@@ -74,5 +64,39 @@ export class AuthService {
 
     async getUser(user) {
         return await this.userService.findOne(user.id);
+    }
+
+    async GetCode(post) {
+        const svgCaptcha = await this.toolsCaptcha.captche(); // 创建验证码
+        const createID = new CreateEncrypt().nanoid(); // 编码一个id
+        this.redisCacheService.cacheSet(
+            `${REDIS.RedisPrefixCaptcha}${createID}`,
+            `${svgCaptcha.text}`,
+            CONST.CAPCODE_FIRST_SET_TIME,
+        );
+        return {
+            key: createID,
+            svg: svgCaptcha.data,
+        };
+    }
+
+    async CompareCode(post) {
+        // 验证码校验判断
+        if (!post.VerificationCode || !post.VerificationKey) {
+            throw new HttpException('缺少验证码', 200);
+        } else {
+            const key = `${REDIS.RedisPrefixCaptcha}${post.VerificationKey}`;
+            const value = await this.redisCacheService.cacheGet(key);
+            if (!value) {
+                throw new HttpException('验证码不正确', 200);
+            } else if (value !== post.VerificationCode) {
+                this.redisCacheService.cacheDel(key);
+                throw new HttpException('验证码不正确', 200);
+            } else {
+                // 验证完之后，删掉此验证码
+                this.redisCacheService.cacheDel(key);
+            }
+        }
+        return {};
     }
 }
