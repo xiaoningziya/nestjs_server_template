@@ -313,4 +313,30 @@ export class UserService {
         }
         return {};
     }
+
+    // 用户设置昵称
+    async UpdateNickname(post, userInfo) {
+        const { id } = userInfo;
+        const { nickname } = post;
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (user && nickname) {
+            const updatePost = this.userRepository.merge(user, {
+                nickname: nickname,
+            });
+            await this.userRepository.save(updatePost);
+            const findUser = await this.userRepository.findOne({
+                where: { id },
+            });
+            return {
+                userInfo: {
+                    account: findUser.account,
+                    avatar: findUser.avatar,
+                    nickname: findUser.nickname,
+                    id: findUser.id,
+                },
+            };
+        } else {
+            return {};
+        }
+    }
 }

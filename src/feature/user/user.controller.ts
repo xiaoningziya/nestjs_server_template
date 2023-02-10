@@ -164,4 +164,16 @@ export class UserController {
     async offlineAllUser(@Body() post: {}, @Req() req) {
         return await this.userService.OfflineAllUser(post);
     }
+
+    /**
+     * 用户设置昵称
+     * @param post
+     */
+    @ApiOperation({ summary: '用户设置昵称' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('updateNickname')
+    async updateNickname(@Body() post: UserDOT.SetNicknameDto, @Req() req) {
+        const userInfo = req.user; // 拿到请求的用户信息
+        return await this.userService.UpdateNickname(post, userInfo);
+    }
 }

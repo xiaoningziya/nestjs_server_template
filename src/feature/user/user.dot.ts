@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { DataListCommonDto } from '@/common/dto.common';
 
@@ -58,6 +58,14 @@ export class OfflineUserDto {
     @ApiProperty({ description: '用户id' })
     @IsNotEmpty({ message: '缺少用户id' })
     readonly id: string;
+}
+
+export class SetNicknameDto {
+    @ApiProperty({ description: '用户昵称' })
+    @IsNotEmpty({ message: '缺少用户昵称' })
+    @MaxLength(10, { message: '昵称最大长度10位' })
+    @MinLength(2, { message: '昵称最小长度2位' })
+    readonly nickname: string;
 }
 
 export class GetUserListUserDto extends DataListCommonDto {}
