@@ -203,7 +203,7 @@ export class UserService {
         };
     }
 
-    // 查询登录表用户(分页) Redis
+    // 查询登录表用户 Redis
     async GetCatchLoginUser(post) {
         const arr = await this.redisCacheService.cacheStoreKeys();
         const keys = arr.filter(
@@ -214,13 +214,39 @@ export class UserService {
             for (let i = 0; i < keys.length; i++) {
                 const val = await this.redisCacheService.cacheGet(keys[i]);
                 if (val) {
-                    let noPrefix = keys[i].split(REDIS.RedisPrefixToken[1]); // 不包含前缀的值
+                    let noPrefix = keys[i].split(REDIS.RedisPrefixToken)[1]; // 不包含前缀的值
                     datas.push({
                         KEY: keys[i],
                         VALUE: val,
                         uuid: noPrefix.split('&')[0],
                         account: noPrefix.split('&')[1],
                         token: val,
+                    });
+                }
+            }
+            return {
+                list: datas,
+                count: datas.length,
+            };
+        }
+        return {};
+    }
+
+    // 查询图片验证码 Redis
+    async GetCapcodeList(post) {
+        const arr = await this.redisCacheService.cacheStoreKeys();
+        const keys = arr.filter(
+            (item) => item.indexOf(REDIS.RedisPrefixCaptcha) > -1,
+        );
+        if (keys?.length) {
+            let datas = [];
+            for (let i = 0; i < keys.length; i++) {
+                const val = await this.redisCacheService.cacheGet(keys[i]);
+                if (val) {
+                    let noPrefix = keys[i].split(REDIS.RedisPrefixToken)[1]; // 不包含前缀的值
+                    datas.push({
+                        KEY: keys[i],
+                        VALUE: val,
                     });
                 }
             }
@@ -266,7 +292,23 @@ export class UserService {
         );
         if (keys?.length) {
             for (let i = 0; i < keys.length; i++) {
-                await this.redisCacheService.cacheDel(keys[i]);
+                this.redisCacheService.cacheDel(keys[i]);
+            }
+        }
+        return {};
+    }
+
+    // 清空图片验证码
+    async ClearCapcodeList(post) {
+        const qb = this.UserTokenRepository.createQueryBuilder('user'); // qb实体
+        // // 清空 redis
+        const arr = await this.redisCacheService.cacheStoreKeys();
+        const keys = arr.filter(
+            (item) => item.indexOf(REDIS.RedisPrefixCaptcha) > -1,
+        );
+        if (keys?.length) {
+            for (let i = 0; i < keys.length; i++) {
+                this.redisCacheService.cacheDel(keys[i]);
             }
         }
         return {};

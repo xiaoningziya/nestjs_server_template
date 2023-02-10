@@ -114,11 +114,33 @@ export class UserController {
      * 查询登录表用户 Redis
      * @param post
      */
-    @ApiOperation({ summary: '查询登录表用户(分页) Redis' })
+    @ApiOperation({ summary: '查询登录表用户 Redis' })
     @UseGuards(AuthGuard('jwt'))
     @Post('getCatchLoginUser')
     async getCatchLoginUser(@Body() post: {}, @Req() req) {
         return await this.userService.GetCatchLoginUser(post);
+    }
+
+    /**
+     * 查询验证码列表 Redis
+     * @param post
+     */
+    @ApiOperation({ summary: '查询验证码列表 Redis' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('getCapcodeList')
+    async getCapcodeList(@Body() post: {}, @Req() req) {
+        return await this.userService.GetCapcodeList(post);
+    }
+
+    /**
+     * 清空验证码列表 Redis
+     * @param post
+     */
+    @ApiOperation({ summary: '清空验证码列表 Redis' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('clearCapcodeList')
+    async clearCapcodeList(@Body() post: {}, @Req() req) {
+        return await this.userService.ClearCapcodeList(post);
     }
 
     /**

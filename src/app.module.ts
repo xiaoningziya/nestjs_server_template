@@ -44,11 +44,10 @@ const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];
         TasksModule,
         /**
          * @desc 限速：限制客户端在一定时间内的请求次数
-         * 此处限制1分钟内最多10次请求
          */
         ThrottlerModule.forRoot({
-            ttl: 5, // 5秒内
-            limit: 5, // 最多请求5次
+            ttl: 60, //  <== 时间内(单位：秒)
+            limit: 300, // <== 最多请求的次数(超过次数会被服务端返回)
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
