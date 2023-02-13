@@ -11,7 +11,7 @@ import RootDirname from '@/common/RootDirname';
         MulterModule.register({
             storage: diskStorage({
                 /**
-                 * 访问地址：http://0.0.0.0:3001/static/upload/1676272943743.png
+                 * 访问地址：http://172.16.1.165/:3001/static/upload/1676272943743.png
                  * 由于根目录配置了虚拟路径，所以<public>需要改成<static>才可以访问
                  */
                 destination: join(RootDirname, '/public/upload'),
