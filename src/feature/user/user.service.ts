@@ -339,4 +339,30 @@ export class UserService {
             return {};
         }
     }
+
+    // 用户设置头像
+    async UpdateAvatar(post, userInfo) {
+        const { id } = userInfo;
+        const { url } = post;
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (user && url) {
+            const updatePost = this.userRepository.merge(user, {
+                avatar: url,
+            });
+            await this.userRepository.save(updatePost);
+            const findUser = await this.userRepository.findOne({
+                where: { id },
+            });
+            return {
+                userInfo: {
+                    account: findUser.account,
+                    avatar: findUser.avatar,
+                    nickname: findUser.nickname,
+                    id: findUser.id,
+                },
+            };
+        } else {
+            return {};
+        }
+    }
 }

@@ -23,6 +23,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from '@/core/middleware/logger.middleware';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from '@/feature/tasks/tasks.module';
+import { UploadModule } from '@/feature/upload/upload.module';
 
 // 业务相关的Modules,组合后在入口解构
 const FeatureModuleList: Array<typeof PostsModule> = [
@@ -31,6 +32,7 @@ const FeatureModuleList: Array<typeof PostsModule> = [
     UserModule,
     AuthModule,
     RedisCacheModule,
+    UploadModule,
 ];
 // 数据表集合
 const Entities: Array<any> = [PostsEntity, UserEntity, UserTokenEntity];

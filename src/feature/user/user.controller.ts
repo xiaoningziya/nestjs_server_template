@@ -176,4 +176,16 @@ export class UserController {
         const userInfo = req.user; // 拿到请求的用户信息
         return await this.userService.UpdateNickname(post, userInfo);
     }
+
+    /**
+     * 用户设置头像
+     * @param post
+     */
+    @ApiOperation({ summary: '用户设置头像' })
+    @UseGuards(AuthGuard('jwt'))
+    @Post('updateAvatar')
+    async updateAvatar(@Body() post: UserDOT.SetAvatarDto, @Req() req) {
+        const userInfo = req.user; // 拿到请求的用户信息
+        return await this.userService.UpdateAvatar(post, userInfo);
+    }
 }

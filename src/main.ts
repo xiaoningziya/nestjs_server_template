@@ -19,7 +19,9 @@ async function runServer() {
     // NestFactory 暴露了一些静态方法用于创建应用程序的实例。
     // 其中，create() 方法返回一个应用程序的对象，该对象实现了 INestApplication 接口
     // 除非您确实需要访问底层平台的API，否则 无需 指定平台类型:<NestExpressApplication>
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        cors: true,
+    });
     // 设置全局路由前缀
     app.setGlobalPrefix('api');
     // 全局注册过滤器
@@ -29,7 +31,7 @@ async function runServer() {
     // 跨域资源共享
     app.enableCors(); // 允许跨站访问 或：const app = await NestFactory.create(AppModule, { cors: true });
     // 防止跨站脚本攻击
-    app.use(helmet());
+    // app.use(helmet()); // 打开配置可能会有跨域问题
     // CSRF保护：跨站点请求伪造
     // app.use(csurf({ cookie: true }));
     // 全局注册 日志中间件

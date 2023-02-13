@@ -68,4 +68,10 @@ export class SetNicknameDto {
     readonly nickname: string;
 }
 
+export class SetAvatarDto {
+    @ApiProperty({ description: '头像地址' })
+    @IsNotEmpty({ message: '缺少图片地址' })
+    readonly url: string;
+}
+
 export class GetUserListUserDto extends DataListCommonDto {}
