@@ -59,7 +59,15 @@ export class AuthService {
         const newUser = await this.UserTokenRepository.create(row);
         await this.UserTokenRepository.save(newUser);
 
-        return { token };
+        return {
+            token: token,
+            userInfo: {
+                id: user.id,
+                account: user.account,
+                avatar: user.avatar,
+                nickname: user.nickname,
+            },
+        };
     }
 
     async getUser(user) {
