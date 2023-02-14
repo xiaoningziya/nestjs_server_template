@@ -1,3 +1,30 @@
+# 工程目录结构
+
+-   config 配置目录
+-   dist 输出目录
+-   docs 文档目录
+-   public 静态资源目录
+-   -   upload 文件上传目录
+-   src 开发目录
+-   -   common 公用目录
+-   -   constant 常量声明目录
+-   -   core 洋葱模型
+-   -   -   filter 过滤器
+-   -   -   guard 守卫
+-   -   -   interceptor 拦截器
+-   -   -   middleware 中间件
+-   -   feature 业务开发目录
+-   -   -   auth 鉴权模块
+-   -   -   post 示例代码
+-   -   -   tasks 定时执行的脚本任务
+-   -   -   upload 上传模块
+-   -   -   upload 用户模块
+-   -   redis 缓存库目录
+-   test 测试目录
+-   views 模版渲染目录(ejs、hbs)
+-   -   admin 后台模版
+-   -   default 前台模版
+
 # TypeScript Class 方法修饰符
 
 -   `public`：修饰的属性与方法是共有的，默认；
