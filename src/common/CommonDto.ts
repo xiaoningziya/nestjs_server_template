@@ -1,3 +1,7 @@
+/**
+ * @file 业务公用的dot类
+ */
+
 import { IsNotEmpty, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

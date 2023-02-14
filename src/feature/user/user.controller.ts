@@ -11,7 +11,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import * as UserDOT from './user.dot';
+import * as UserDOT from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('用户系列接口：/api/user')
@@ -43,7 +43,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '修改密码' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('updatePassword')
     async updatePassword(
         @Body() post: UserDOT.UpdatePasswordUserDto,
@@ -58,7 +57,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '退出登录' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('loginOut')
     // 这里不接收参数，无需dot
     async loginOut(@Body() post: {}, @Req() req) {
@@ -71,7 +69,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '获取用户列表' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('getUserList')
     async getUserList(@Body() post: UserDOT.GetUserListUserDto, @Req() req) {
         return await this.userService.GetUserList(post);
@@ -82,7 +79,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '删除单个用户(拉黑)' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('deleteUser')
     async deleteUser(@Body() post: UserDOT.DeleteUserDto, @Req() req) {
         return await this.userService.DeleteUser(post);
@@ -93,7 +89,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '恢复单个用户' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('recoverUser')
     async recoverUser(@Body() post: UserDOT.RecoverUserDto, @Req() req) {
         return await this.userService.RecoverUser(post);
@@ -104,7 +99,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '查询登录表用户(分页) Mysql' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('getLoginUser')
     async getLoginUser(@Body() post: UserDOT.GetLoginUserDto, @Req() req) {
         return await this.userService.GetLoginUser(post);
@@ -115,7 +109,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '查询登录表用户 Redis' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('getCatchLoginUser')
     async getCatchLoginUser(@Body() post: {}, @Req() req) {
         return await this.userService.GetCatchLoginUser(post);
@@ -126,7 +119,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '查询验证码列表 Redis' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('getCapcodeList')
     async getCapcodeList(@Body() post: {}, @Req() req) {
         return await this.userService.GetCapcodeList(post);
@@ -137,7 +129,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '清空验证码列表 Redis' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('clearCapcodeList')
     async clearCapcodeList(@Body() post: {}, @Req() req) {
         return await this.userService.ClearCapcodeList(post);
@@ -148,7 +139,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '下线单个用户' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('offlineUser')
     async offlineUser(@Body() post: UserDOT.OfflineUserDto, @Req() req) {
         return await this.userService.OfflineUser(post);
@@ -159,7 +149,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '下线所有用户' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('offlineAllUser')
     async offlineAllUser(@Body() post: {}, @Req() req) {
         return await this.userService.OfflineAllUser(post);
@@ -170,7 +159,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '用户设置昵称' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('updateNickname')
     async updateNickname(@Body() post: UserDOT.SetNicknameDto, @Req() req) {
         const userInfo = req.user; // 拿到请求的用户信息
@@ -182,7 +170,6 @@ export class UserController {
      * @param post
      */
     @ApiOperation({ summary: '用户设置头像' })
-    @UseGuards(AuthGuard('jwt'))
     @Post('updateAvatar')
     async updateAvatar(@Body() post: UserDOT.SetAvatarDto, @Req() req) {
         const userInfo = req.user; // 拿到请求的用户信息

@@ -10,7 +10,7 @@ import { JwtStorage } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { UserTokenEntity } from './auth.entity';
-import { RedisCacheModule } from '@/db/redis-cache.module';
+import { RedisCacheModule } from '@/redis/redis-cache.module';
 import { ToolsCaptcha } from '@/common/captcha';
 
 /**

@@ -17,7 +17,7 @@ export class TransformInterceptor<T>
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(
             map((data) => {
-                console.log('===拦截器===', data);
+                // console.log('===拦截器===', data);
                 return {
                     data,
                     code: 0,

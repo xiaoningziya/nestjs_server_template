@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { RedisCacheService } from '@/db/redis-cache.service';
+import { RedisCacheService } from '@/redis/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
-import * as CONST from '@/constant/token';
-import * as REDIS from '@/constant/redis';
+import * as CONST from '@/constant/LengthOfTime';
+import * as REDIS from '@/constant/RedisKeyPrefix';
 import { ToolsCaptcha } from '@/common/captcha';
 import { CreateEncrypt } from '@/common/encrypt';
 

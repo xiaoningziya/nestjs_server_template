@@ -15,11 +15,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
-import { RedisCacheService } from '@/db/redis-cache.service';
+import { RedisCacheService } from '@/redis/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
-import * as CONST from '@/constant/token';
-import dayjs from 'dayjs';
-import * as REDIS from '@/constant/redis';
+import * as CONST from '@/constant/ApiWriteList';
+import * as Duration from '@/constant/LengthOfTime';
+import * as REDIS from '@/constant/RedisKeyPrefix';
 
 export class JwtStorage extends PassportStrategy(Strategy) {
     constructor(
@@ -50,6 +50,7 @@ export class JwtStorage extends PassportStrategy(Strategy) {
     }
 
     async validate(req, user: UserEntity) {
+        console.log('检测', req, user);
         /**
          * @desc 取出token并验证
          * 在验证token时， 从redis中取token，如果取不到token，可能是token已过期。
@@ -85,7 +86,7 @@ export class JwtStorage extends PassportStrategy(Strategy) {
             this.redisCacheService.cacheSet(
                 `${REDIS.RedisPrefixToken}${user.id}&${user.account}`,
                 token,
-                CONST.TOKEN_AUTOMATIC_RENEWAL_TIME,
+                Duration.TOKEN_AUTOMATIC_RENEWAL_TIME,
             );
             const findRow = await this.UserTokenRepository.findOne({
                 where: { uuid: user.id },

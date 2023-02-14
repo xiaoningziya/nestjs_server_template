@@ -4,7 +4,7 @@
  */
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as CONST from '../constant/swagger';
+import * as CONST from '../constant/SwaggerConfig';
 
 export class SwaggerConfig {
     app: NestExpressApplication;

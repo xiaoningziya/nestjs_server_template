@@ -9,10 +9,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { TransformInterceptor } from './core/interceptor/transform.interceptor';
 import { HttpExceptionFilter } from './core/filter/transform.filter';
 import { ValidationPipe } from '@nestjs/common';
-import { PORT, IP } from './constant/listen';
+import { PORT, IP } from './constant/ServerListen';
 import { SwaggerConfig } from './common/swagger';
 import { join } from 'path';
 import helmet from 'helmet';
+import { JwtAuthGuard } from '@/core/guard/jwt.guard';
 // import csurf from 'csurf';
 
 async function runServer() {
@@ -28,6 +29,8 @@ async function runServer() {
     app.useGlobalFilters(new HttpExceptionFilter());
     // 全局注册拦截器
     app.useGlobalInterceptors(new TransformInterceptor());
+    // 全局注册鉴权守卫
+    app.useGlobalGuards(new JwtAuthGuard());
     // 跨域资源共享
     app.enableCors(); // 允许跨站访问 或：const app = await NestFactory.create(AppModule, { cors: true });
     // 防止跨站脚本攻击

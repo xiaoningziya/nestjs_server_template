@@ -2,10 +2,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { RedisCacheService } from '@/db/redis-cache.service';
+import { RedisCacheService } from '@/redis/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 var bcrypt = require('bcryptjs');
-import * as REDIS from '@/constant/redis';
+import * as REDIS from '@/constant/RedisKeyPrefix';
 export interface UserRo {
     userInfo: UserEntity;
 }

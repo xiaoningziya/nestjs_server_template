@@ -20,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         let validMessage: string = '';
 
         for (let key in exception) {
-            console.log('===过滤器===', key, exception[key]);
+            // console.log('===过滤器===', key, exception[key]);
         }
         if (typeof exceptionResponse === 'object') {
             validMessage =

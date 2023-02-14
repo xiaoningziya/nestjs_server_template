@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
-import { RedisCacheModule } from '@/db/redis-cache.module';
+import { RedisCacheModule } from '@/redis/redis-cache.module';
 
 @Module({
     imports: [

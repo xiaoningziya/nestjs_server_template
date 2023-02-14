@@ -12,7 +12,7 @@ export class LoggerMiddleware implements NestMiddleware {
     // next：执行下一个中件间
     use(req: Request, res: Response, next: () => void) {
         const { method, path } = req;
-        console.log(`===日志中间件===, ${method}, ${path}`);
+        // console.log(`===日志中间件===, ${method}, ${path}`);
         next();
     }
 }

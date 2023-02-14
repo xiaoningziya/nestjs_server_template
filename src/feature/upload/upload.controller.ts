@@ -10,7 +10,6 @@ import {
     UploadedFile,
     HttpException,
 } from '@nestjs/common';
-import RootDirname from '@/common/RootDirname';
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';

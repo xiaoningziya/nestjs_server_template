@@ -1,6 +1,6 @@
 import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { DataListCommonDto } from '@/common/dto.common';
+import { DataListCommonDto } from '@/common/CommonDto';
 
 export class RegisterUserDto {
     @ApiProperty({ description: '账号' })

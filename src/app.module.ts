@@ -17,7 +17,7 @@ import envConfig from '../config/env';
 import { PostsEntity } from './feature/posts/posts.entity';
 import { UserEntity } from './feature/user/user.entity';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
-import { RedisCacheModule } from '@/db/redis-cache.module';
+import { RedisCacheModule } from '@/redis/redis-cache.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from '@/core/middleware/logger.middleware';

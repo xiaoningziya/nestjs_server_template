@@ -10,8 +10,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RedisCacheService } from '@/db/redis-cache.service';
-import * as AuthDOT from './auth.dot';
+import { RedisCacheService } from '@/redis/redis-cache.service';
+import * as AuthDOT from './auth.dto';
 
 @ApiTags('AUTH 认证')
 @Controller('auth')
