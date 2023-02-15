@@ -175,4 +175,15 @@ export class UserController {
         const userInfo = req.user; // 拿到请求的用户信息
         return await this.userService.UpdateAvatar(post, userInfo);
     }
+
+    /**
+     * 导出 用户表当前页数据
+     * @param post
+     */
+    @ApiOperation({ summary: '导出 用户表当前页数据' })
+    @Post('exportExcel')
+    async exportExcel(@Body() post: UserDOT.GetUserListUserDto, @Req() req) {
+        const userInfo = req.user; // 拿到请求的用户信息
+        return await this.userService.ExportExcel(post, userInfo);
+    }
 }

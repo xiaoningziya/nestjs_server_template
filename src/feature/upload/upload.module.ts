@@ -22,6 +22,9 @@ import RootDirPath from '@/common/RootDirpath';
                     return callback(null, fileName);
                 },
             }),
+            limits: {
+                fileSize: 1024 * 1024, // 设置最大上传 1MB
+            },
         }),
     ],
     controllers: [UploadController],

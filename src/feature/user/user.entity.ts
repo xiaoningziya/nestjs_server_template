@@ -26,10 +26,10 @@ export class UserEntity {
     })
     password: string;
 
-    @Column({ length: 20, default: '' })
+    @Column({ length: 20, default: 'User' })
     nickname: string;
 
-    @Column({ default: '' })
+    @Column({ default: 'http://172.16.1.165:3001/static/default.png' })
     avatar: string;
 
     @CreateDateColumn({

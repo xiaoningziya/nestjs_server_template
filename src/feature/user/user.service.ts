@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import * as ExcelJS from 'exceljs';
+import { Like, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { RedisCacheService } from '@/redis/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
@@ -108,25 +109,34 @@ export class UserService {
 
     // 创建用户假数据
     async mockData() {
-        const new_user = {
-            account: String(
-                Math.floor(Math.random() * 10 + new Date().getTime()),
-            ),
-            password: '111',
-        };
-        const user = await this.userRepository.findOne({
-            where: { account: new_user.account },
-        });
-        if (user) return;
-        const newUser = await this.userRepository.create(new_user);
-        await this.userRepository.save(newUser);
+        const len = 50000;
+        const phoneNum = 18210249690;
+        for (let i = 0; i < len; i++) {
+            const new_user = {
+                account: String(phoneNum * 1 + i * 1),
+                password: '182',
+            };
+            const user = await this.userRepository.findOne({
+                where: { account: new_user.account },
+            });
+            if (user) return;
+            const newUser = await this.userRepository.create(new_user);
+            await this.userRepository.save(newUser);
+        }
     }
 
     // 获取用户列表(分页)
     async GetUserList(post) {
-        const { pagenum = 1, pagesize = 10 } = post;
+        const { pagenum = 1, pagesize = 10, keyword } = post;
         const qb = this.userRepository.createQueryBuilder('user'); // qb实体
         qb.withDeleted(); // 指示是否应在实体结果中包含软删除的行
+        // 如果有关键字，进行账号模糊查询
+        if (keyword) {
+            qb.where({
+                account: Like(`%${keyword}%`),
+            });
+        }
+        // 定义要返回的字段
         qb.select([
             'user.id',
             'user.account',
@@ -141,6 +151,8 @@ export class UserService {
         const count = await qb.getCount(); // 查总数
         qb.offset(pagesize * (pagenum - 1)); // 偏移位置
         qb.limit(pagesize); // 条数
+        // .skip(5)     // 可选：跳过多少条
+        // .take(10)    // 可选：拿多少条
         const list = await qb.getMany(); // getMany() 获取所有用户
         return {
             list,
@@ -364,5 +376,62 @@ export class UserService {
         } else {
             return {};
         }
+    }
+
+    async ExportExcel(post, userInfo) {
+        // 解构前端入参
+        const { pagenum = 1, pagesize = 10, keyword } = post;
+        const qb = this.userRepository.createQueryBuilder('user'); // qb实体
+        qb.withDeleted(); // 指示是否应在实体结果中包含软删除的行
+        // 如果有关键字，进行账号模糊查询
+        if (keyword) {
+            qb.where({
+                account: Like(`%${keyword}%`),
+            });
+        }
+        // 定义要返回的字段
+        qb.select([
+            'user.id',
+            'user.account',
+            'user.nickname',
+            'user.avatar',
+            'user.create_time',
+            'user.update_time',
+        ]); // 需要的属性=
+        qb.orderBy('user.create_time', 'ASC'); // @arguments[1]: 'ASC' 升序 'DESC' 降序
+        qb.skip(pagesize * (pagenum - 1)); // 跳过多少条
+        qb.take(pagesize); // 拿多少条
+        // result是通过前端传递的参数从数据库获取需要导出的信息
+        const result = await qb.getMany(); // getMany() 获取所有用户
+        const workbook = new ExcelJS.Workbook();
+        // 设置 Excel 的 sheet
+        const worksheet = workbook.addWorksheet('【 用户注册表数据 】');
+        // 定义表头名称和字段名
+        worksheet.columns = [
+            { header: 'ID', key: 'id', width: 42 },
+            { header: '账号', key: 'account', width: 25 },
+            { header: '昵称', key: 'nickname', width: 25 },
+            { header: '头像', key: 'avatar', width: 35 },
+            { header: '注册时间', key: 'create_time', width: 25 },
+            { header: '更新时间', key: 'update_time', width: 25 },
+        ];
+        worksheet.addRows(result);
+        // 获取第一行
+        const FirstRow = worksheet.getRow(1);
+        FirstRow.height = 28; // 第一行高度
+        FirstRow.font = {
+            size: 18, // 字体大小
+            bold: true, // 加粗
+            // 字体颜色 argb和theme二选一即可
+            color: {
+                // argb: 'be14807f'
+                theme: 5, // 0白 1黑 2灰 3蓝 5红
+            },
+        };
+        const content = await workbook.xlsx.writeBuffer();
+        return {
+            filename: '用户注册表导出--' + new Date().getTime(),
+            content, // 前端接受到的数据格式为{type: 'buffer', data: []}
+        };
     }
 }
