@@ -7,6 +7,9 @@ import { RedisCacheService } from '@/redis/redis-cache.service';
 import { UserTokenEntity } from '@/feature/auth/auth.entity';
 var bcrypt = require('bcryptjs');
 import * as REDIS from '@/constant/RedisKeyPrefix';
+import fs from 'fs';
+import path from 'path';
+import RootDirpath from '@/common/RootDirpath';
 export interface UserRo {
     userInfo: UserEntity;
 }
@@ -411,11 +414,27 @@ export class UserService {
             { header: 'ID', key: 'id', width: 42 },
             { header: '账号', key: 'account', width: 25 },
             { header: '昵称', key: 'nickname', width: 25 },
-            { header: '头像', key: 'avatar', width: 35 },
+            { header: '头像', key: 'avatar', width: 50 },
             { header: '注册时间', key: 'create_time', width: 25 },
             { header: '更新时间', key: 'update_time', width: 25 },
         ];
         worksheet.addRows(result);
+        // 针对头像列each循环 修改样式
+        const AvatarColumn = worksheet.getColumn('avatar');
+        AvatarColumn.eachCell((item) => {
+            item.style.font = {
+                italic: true, // 斜体
+                underline: 'single', // 下划线 单条
+                color: {
+                    // argb: 'be14807f', // 字体颜色
+                    theme: 3,
+                },
+            };
+            item.value = {
+                text: item.value as string, // 设置 value
+                hyperlink: item.value as string, // 设置 link
+            };
+        });
         // 获取第一行
         const FirstRow = worksheet.getRow(1);
         FirstRow.height = 28; // 第一行高度
